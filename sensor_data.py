@@ -1,11 +1,16 @@
 import matplotlib.pyplot as plt
+from datetime import datetime
 
-# Read voltage readings from file
+# Read voltage readings and timestamps from file
+timestamps = []
 voltages = []
 
 with open("readings.csv", "r") as file:
     for line in file:
-        voltage = float(line.strip())
+        parts = line.strip().split(",")
+        timestamp = datetime.strptime(parts[0], "%Y-%m-%d %H:%M:%S")
+        voltage = float(parts[1])
+        timestamps.append(timestamp)
         voltages.append(voltage)
 
 # Calculate statistics
@@ -36,12 +41,13 @@ print(f"{number_above_threshold} readings above threshold out of {total_readings
 
 #Plot the readings
 plt.figure(figsize=(10, 5))
-plt.plot(voltages, marker='o', color='blue', label='Voltage')
-
+plt.plot(timestamps, voltages, marker='o', color='blue', label='Voltage')
 plt.axhline(y=threshold, color ='red', linestyle='--', label='Threshold')
-plt.title('Voltage Readings')
-plt.xlabel('Reading Number')
+plt.title('Voltage Readings Over Time')
+plt.xlabel('Time')
 plt.ylabel('Voltage (V)')
 plt.legend()
 plt.grid(True)
+plt.xticks(rotation=45)
+plt.tight_layout()
 plt.show()
